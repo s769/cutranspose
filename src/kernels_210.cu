@@ -21,8 +21,6 @@
  ********************************************/
 #include "cutranspose.h"
 #include "kernels_210.h"
-
-// #define BLOCK_ROWS2 2
  
 /********************************************
  * Public functions                         *
@@ -37,7 +35,7 @@ void dev_transpose_210_ept1( data_t*       out,
 
 	__shared__ data_t tile[TILE_SIZE][TILE_SIZE + 1];
 	
-	int x_in, y, z_in,
+	size_t x_in, y, z_in,
 	    x_out, z_out,
 	    ind_in,
 	    ind_out;
@@ -47,17 +45,17 @@ void dev_transpose_210_ept1( data_t*       out,
 	    bx = blockIdx.x,
 	    by = blockIdx.y;
 
-	x_in = lx + TILE_SIZE * bx;
-	z_in = ly + TILE_SIZE * by;
+	x_in = lx + (size_t)TILE_SIZE * bx;
+	z_in = ly + (size_t)TILE_SIZE * by;
 
 	y = blockIdx.z;
 
-	x_out = ly + TILE_SIZE * bx;
-	z_out = lx + TILE_SIZE * by;
+	x_out = ly + (size_t)TILE_SIZE * bx;
+	z_out = lx + (size_t)TILE_SIZE * by;
 
 
-	ind_in = x_in + (y + z_in * np1) * np0;
-	ind_out = z_out + (y + x_out * np1) * np2;
+	ind_in = x_in + (y + (size_t)z_in * np1) * np0;
+	ind_out = z_out + (y + (size_t)x_out * np1) * np2;
 
 	if( x_in < np0 && z_in < np2 )
 	{
@@ -83,7 +81,7 @@ void dev_transpose_210_ept2( data_t*       out,
 
 	__shared__ data_t tile[TILE_SIZE][TILE_SIZE + 1];
 	
-	int x_in, y, z_in,
+	size_t x_in, y, z_in,
 	    x_out, z_out,
 	    ind_in,
 	    ind_out;
@@ -93,23 +91,23 @@ void dev_transpose_210_ept2( data_t*       out,
 	    bx = blockIdx.x,
 	    by = blockIdx.y;
 		
-	x_in = lx + TILE_SIZE * bx;
-	z_in = ly + TILE_SIZE * by;
+	x_in = lx + (size_t)TILE_SIZE * bx;
+	z_in = ly + (size_t)TILE_SIZE * by;
 
 	y = blockIdx.z;
 
-	x_out = ly + TILE_SIZE * bx;
-	z_out = lx + TILE_SIZE * by;
+	x_out = ly + (size_t)TILE_SIZE * bx;
+	z_out = lx + (size_t)TILE_SIZE * by;
 
-	ind_in = x_in + (y + z_in * np1) * np0;
-	ind_out = z_out + (y + x_out * np1) * np2;
+	ind_in = x_in + (y + (size_t)z_in * np1) * np0;
+	ind_out = z_out + (y + (size_t)x_out * np1) * np2;
 
 	if( x_in < np0 && z_in < np2 )
 	{
 		tile[lx][ly] = in[ind_in];
 		if( z_in + 8 < np2 )
 		{
-			tile[lx][ly +  8] = in[ind_in +  8*np0*np1];
+			tile[lx][ly +  8] = in[ind_in +  (size_t)8*np0*np1];
 		}
 	}
 	
@@ -120,13 +118,11 @@ void dev_transpose_210_ept2( data_t*       out,
 		out[ind_out] = tile[ly][lx];
 		if( x_out + 8 < np0 )
 		{
-			out[ind_out +  8*np2*np1] = tile[ly + 8][lx];
+			out[ind_out +  (size_t)8*np2*np1] = tile[ly + 8][lx];
 		}
 	}
 
-
 }
-
 
 __global__
 void dev_transpose_210_ept4( data_t*       out,
@@ -138,7 +134,7 @@ void dev_transpose_210_ept4( data_t*       out,
 
 	__shared__ data_t tile[TILE_SIZE][TILE_SIZE + 1];
 	
-	int x_in, y, z_in,
+	size_t x_in, y, z_in,
 	    x_out, z_out,
 	    ind_in,
 	    ind_out;
@@ -148,29 +144,29 @@ void dev_transpose_210_ept4( data_t*       out,
 	    bx = blockIdx.x,
 	    by = blockIdx.y;
 		
-	x_in = lx + TILE_SIZE * bx;
-	z_in = ly + TILE_SIZE * by;
+	x_in = lx + (size_t)TILE_SIZE * bx;
+	z_in = ly + (size_t)TILE_SIZE * by;
 
 	y = blockIdx.z;
 
 	x_out = ly + TILE_SIZE * bx;
 	z_out = lx + TILE_SIZE * by;
 
-	ind_in = x_in + (y + z_in * np1) * np0;
-	ind_out = z_out + (y + x_out * np1) * np2;
+	ind_in = x_in + (y + (size_t)z_in * np1) * np0;
+	ind_out = z_out + (y + (size_t)x_out * np1) * np2;
 
 	if( x_in < np0 && z_in < np2 )
 	{
 		tile[lx][ly] = in[ind_in];
 		if( z_in + 4 < np2 )
 		{
-			tile[lx][ly +  4] = in[ind_in +  4*np0*np1];
+			tile[lx][ly +  4] = in[ind_in +  (size_t)4*np0*np1];
 			if( z_in + 8 < np2 )
 			{
-				tile[lx][ly +  8] = in[ind_in +  8*np0*np1];
+				tile[lx][ly +  8] = in[ind_in +  (size_t)8*np0*np1];
 				if( z_in + 12 < np2 )
 				{
-					tile[lx][ly + 12] = in[ind_in + 12*np0*np1];
+					tile[lx][ly + 12] = in[ind_in + (size_t)12*np0*np1];
 				}
 			}
 		}
@@ -183,70 +179,18 @@ void dev_transpose_210_ept4( data_t*       out,
 		out[ind_out] = tile[ly][lx];
 		if( x_out + 4 < np0 )
 		{
-			out[ind_out +  4*np2*np1] = tile[ly +  4][lx];
+			out[ind_out +  (size_t)4*np2*np1] = tile[ly +  4][lx];
 			if( x_out + 8 < np0 )
 			{
-				out[ind_out +  8*np2*np1] = tile[ly +  8][lx];
+				out[ind_out +  (size_t)8*np2*np1] = tile[ly +  8][lx];
 				if( x_out + 12 < np0 )
 				{
-					out[ind_out + 12*np2*np1] = tile[ly + 12][lx];
+					out[ind_out + (size_t)12*np2*np1] = tile[ly + 12][lx];
 				}
 			}
 		}
 	}
 }
-
-// __global__
-// void dev_transpose_210_ept_custom(data_t*       out,
-// 									const data_t* in,
-// 									int           np0,
-// 									int           np1,
-// 									int           np2 )
-// {
-// 	__shared__ data_t tile[TILE_SIZE][TILE_SIZE + 1];
-	
-// 	int x_in, y, z_in,
-// 	    x_out, z_out,
-// 	    ind_in,
-// 	    ind_out;
-	
-// 	int lx = threadIdx.x,
-// 	    ly = threadIdx.y,
-// 	    bx = blockIdx.x,
-// 	    by = blockIdx.y;
-		
-// 	x_in = lx + TILE_SIZE * bx;
-// 	z_in = ly + TILE_SIZE * by;
-
-// 	y = blockIdx.z;
-
-// 	x_out = ly + TILE_SIZE * bx;
-// 	z_out = lx + TILE_SIZE * by;
-
-// 	ind_in = x_in + (y + z_in * np1) * np0;
-// 	ind_out = z_out + (y + x_out * np1) * np2;
-
-// 	for (int i = 0; i < TILE_SIZE; i += BLOCK_ROWS2)
-// 	{
-// 		if (x_in < np0 && z_in + i < np2)
-// 		{
-// 			tile[lx][ly + i] = in[ind_in + i*np0*np1];
-// 		}
-// 	}
-
-// 	__syncthreads();
-
-// 	for (int i = 0; i < TILE_SIZE; i += BLOCK_ROWS2)
-// 	{
-// 		if (z_out + i < np2 && x_out < np0)
-// 		{
-// 			out[ind_out + i*np2*np1] = tile[ly + i][lx];
-// 		}
-// 	}
-	
-
-// }
-
 
 __global__
 void dev_transpose_210_in_place( data_t* data,
