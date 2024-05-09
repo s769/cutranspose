@@ -26,6 +26,7 @@ option( CUT_USE_COMPLEX "Use double complex data." ON )
 option( CUT_SINGLE_PRECISION "Use single precision real numbers." OFF )
 set( CUT_TILE_SIZE 16 CACHE STRING "The tile size." )
 set( CUT_BRICK_SIZE 8 CACHE STRING "The brick size." )
+set( CUT_BLOCK_ROWS 4 CACHE STRING "The number of block rows." )
 
 if( CUT_USE_COMPLEX )
 	set( USE_COMPLEX 1 )

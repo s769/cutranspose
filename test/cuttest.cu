@@ -178,6 +178,7 @@ int main( int argc, char* argv[] )
 		printf( "\tElement size: %zu bytes.\n", sizeof( data_t ) );
 	}
 
+
 	// Memory allocation (CPU and GPU).
 	np = size[0] * size[1] * size[2];
 	in_array =  (data_t*) malloc( np * sizeof( data_t ) );

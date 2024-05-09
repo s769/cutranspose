@@ -5,6 +5,7 @@
 // #cmakedefine FLOAT
 #define TILE_SIZE @CUT_TILE_SIZE@
 #define BRICK_SIZE @CUT_BRICK_SIZE@ 
+#define BLOCK_ROWS2 @CUT_BLOCK_ROWS@
 
 #ifdef USE_COMPLEX
 #include <complex.h>
