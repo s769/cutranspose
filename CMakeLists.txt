@@ -16,8 +16,8 @@
 #   Copyright 2016 Ibai Gurrutxaga, Javier Muguerza, Jose L. Jodra.
 
 cmake_minimum_required( VERSION 3.18 )
-project( cuTranspose )
-
+project( cuTranspose LANGUAGES CXX CUDA C )
+set(CMAKE_CUDA_STANDARD 23)
 find_package( CUDA REQUIRED )
 
 set( LIB_NAME "cuTranspose" )
@@ -51,6 +51,11 @@ set( SRC
 
 configure_file( ${PROJECT_SOURCE_DIR}/include/cutranspose.h.in cutranspose.h )
 include_directories( ${PROJECT_BINARY_DIR} )
-cuda_add_library( ${LIB_NAME} ${SRC} )
-cuda_add_executable( cuttest test/cuttest.cu test/tools.c )
-target_link_libraries( cuttest ${LIB_NAME} )
+add_library( ${LIB_NAME} ${SRC} )
+add_executable( cuttest test/cuttest.cu test/tools.c )
+
+set_target_properties( cuttest
+                       PROPERTIES CUDA_SEPARABLE_COMPILATION ON
+                      )
+
+	      target_link_libraries( cuttest ${LIB_NAME} ${CUDA_LIBRARIES})
